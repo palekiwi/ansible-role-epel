@@ -1,11 +1,13 @@
 ---
 # tasks file for epel
 - name: Check if EPEL repo is already configured.
+  become: true
   ansible.builtin.stat:
     path: "{{ epel_repofile_path }}"
   register: epel_repofile_result
 
 - name: Import EPEL GPG key.
+  become: true
   ansible.builtin.rpm_key:
     key: "{{ epel_repo_gpg_key_url }}"
     state: present
@@ -17,6 +19,7 @@
   ignore_errors: "{{ ansible_check_mode }}"
 
 - name: Install EPEL repo.
+  become: true
   ansible.builtin.dnf:
     name: "{{ epel_repo_url }}"
     state: present
@@ -27,6 +30,7 @@
   when: not epel_repofile_result.stat.exists
 
 - name: Disable Main EPEL repo.
+  become: true
   community.general.ini_file:
     path: "/etc/yum.repos.d/epel.repo"
     section: epel
